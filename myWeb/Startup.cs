@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
+using System.Net;
 
 namespace myWeb
 {
@@ -37,13 +39,20 @@ namespace myWeb
                 app.UseExceptionHandler("/Error");
             }
 
-            app.UseStaticFiles();
+            //app.UseStaticFiles();
 
-            app.UseMvc(routes =>
+            //app.UseMvc(routes =>
+            //{
+            //    routes.MapRoute(
+            //        name: "default",
+            //        template: "{controller}/{action=Index}/{id?}");
+            //});
+
+            String hostname = Dns.GetHostName();
+
+            app.Run(context =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+                return context.Response.WriteAsync("The HOST running this app (VERSION 2) is named: " + hostname);
             });
         }
     }
