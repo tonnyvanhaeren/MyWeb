@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using myWeb.Options;
 using System;
 using System.Net;
 
@@ -20,6 +21,16 @@ namespace myWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<EnvironementOptions>(options => {
+
+                options.databaseOptions.DatabasePort = Configuration.GetSection("MYSQL_57_RHEL7_PORT_3306_TCP_PORT").Value;
+                options.databaseOptions.DatabaseUser = Configuration.GetSection("MYSQL_USER").Value;
+                options.databaseOptions.DatabasePassword = Configuration.GetSection("MYSQL_PASSWORD").Value;
+                options.databaseOptions.DatabaseName = Configuration.GetSection("MYSQL_DATABASE").Value;
+            });
+
+            var test = Configuration.GetSection("MINISHIFT_PASSWORD");
+
             services.AddMvc();
         }
 
@@ -36,21 +47,21 @@ namespace myWeb
                 app.UseExceptionHandler("/Error");
             }
 
-            //app.UseStaticFiles();
+            app.UseStaticFiles();
 
-            //app.UseMvc(routes =>
-            //{
-            //    routes.MapRoute(
-            //        name: "default",
-            //        template: "{controller}/{action=Index}/{id?}");
-            //});
-
-            String hostname = Dns.GetHostName();
-
-            app.Run(context =>
+            app.UseMvc(routes =>
             {
-                return context.Response.WriteAsync("The HOST running this app (VERSION 2) is named: " + hostname);
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller}/{action=Index}/{id?}");
             });
+
+            //String hostname = Dns.GetHostName();
+
+            //app.Run(context =>
+            //{
+            //    return context.Response.WriteAsync("The HOST running this app (VERSION 2) is named: " + hostname);
+            //});
         }
     }
 }
