@@ -1,11 +1,9 @@
-FROM registry.access.redhat.com/rhel7
+FROM registry.access.redhat.com/dotnet/dotnet-20-runtime-rhel7
 
-RUN yum install -y libunwind licicu && yum clean all
+ADD bin/release/netcoreapp2.0/rhel.7-x64/publish/. /app/
 
-ADD bin/release/netcoreapp2.0/rhel.7.4-x64/publish/. /opt/app-root/src/
+WORKDIR /app/
 
-WORKDIR /opt/app-root/src/
+EXPOSE 5001
 
-EXPOSE 5000 
-
-CMD ["/bin/bash", "-c", "/opt/app-root/src/myWeb"]
+CMD ["scl", "enable", "rh-dotnet20", "--", "dotnet",  "myWeb.dll"]
